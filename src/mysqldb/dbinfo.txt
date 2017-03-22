@@ -1,0 +1,34 @@
+create database if not exists Accounts;
+use Accounts;
+
+create table if not exists users (
+		id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
+		name char(18) not null,
+		sex tinyint unsigned,
+		age tinyint unsigned,
+        email char(255),
+		phone char(18),
+        createdate int unsigned,
+        ts timestamp
+	);
+    
+    
+alter table users modify createdate int unsigned;
+alter table users modify id int unsigned not null AUTO_INCREMENT PRIMARY KEY first;
+
+alter table users drop num;
+
+delete from users where id=5 and name="sam5";
+
+select * from users;
+
+select name from users where name="sam5";
+
+drop table users;
+
+
+	
+1489229936
+
+
+17:53:06	delete from users where name="sam5"	Error Code: 1175. You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column To disable safe mode, toggle the option in Preferences -> SQL Editor and reconnect.	0.000 sec

@@ -1,0 +1,7 @@
+# Can ignore specific files
+#*.exe
+*.log
+github.com/*
+bin/*
+pkg/*
+
