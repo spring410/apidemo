@@ -1,7 +1,7 @@
 # Can ignore specific files
 #*.exe
 *.log
-github.com/*
+#github.com/*
 bin/*
 pkg/*
 

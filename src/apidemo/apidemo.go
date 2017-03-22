@@ -13,6 +13,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"path"
 )
 
 type ReturnData struct {
@@ -259,24 +260,31 @@ func onlyTest() {
 
 func CheckUsage() {
 	if len(os.Args) < 2 {
-		log4go.Error("Usage:", os.Args[0], "ip:port")
-		log4go.Error("For example:", os.Args[0], "192.168.1.10:8000")
+		log4go.Error("Usage:%s ip:port", os.Args[0])
+		log4go.Error("For example:%s 192.168.1.10:8000",os.Args[0])
+
+		//waiting log4go to complete
+		time.Sleep(1*time.Second)
 		os.Exit(1)
 	}
 }
 
 func initLogger() {
-	execDirAbsPath, _ := os.Getwd()
-	configPath := execDirAbsPath + "/src/config/logconfig.xml"
+	// execDirAbsPath, _ := os.Getwd()
+	// fmt.Println(execDirAbsPath)
+	exePath, _ := os.Executable()
+	// fmt.Println(exePath)
+	exeDir := path.Dir(exePath)
+	configPath := exeDir + "/logconfig.xml"	
 	fmt.Println("config file:" ,configPath)
 	log4go.LoadConfiguration(configPath)
 	log4go.Info("Loaded log config file")
 }
 
 func main() {
-	fmt.Println("start to run...")
+	fmt.Println("Start to run...")
 	initLogger()
-	log4go.Info("start to run api demo....pid=%d", os.Getpid())
+	log4go.Info("Start to run api demo....pid=%d", os.Getpid())
 
 	//check ip and port
 	CheckUsage()

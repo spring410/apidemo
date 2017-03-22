@@ -11,6 +11,10 @@ export GOPATH="$CURDIR"
 #gofmt -w src
 echo $GOPATH
 go install apidemo 
+
+#copy the config file  to bin
+cp $CURDIR/src/config/logconfig.xml ./bin
+
 export GOPATH="$OLDGOPATH"
 
 echo 'finished'
