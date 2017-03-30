@@ -247,6 +247,9 @@ func initDb() error {
 		} else {
 			log4go.Info("Ping db OK.")
 			err = mysqldb.CreateUsersTable()
+			if err != nil{
+				log4go.Error("Create database,error %s", err)
+			}
 		}
 	}
 
@@ -262,10 +265,7 @@ func CheckUsage() {
 	if len(os.Args) < 2 {
 		log4go.Error("Usage:%s ip:port", os.Args[0])
 		log4go.Error("For example:%s 192.168.1.10:8000",os.Args[0])
-
-		//waiting log4go to complete
-		time.Sleep(1*time.Second)
-		os.Exit(1)
+		Exist(1)
 	}
 }
 
@@ -281,6 +281,12 @@ func initLogger() {
 	log4go.Info("Loaded log config file")
 }
 
+func Exist(err int) {
+	//waiting log4go to complete
+	time.Sleep(1*time.Second)
+	os.Exit(err)
+}
+
 func main() {
 	fmt.Println("Start to run...")
 	initLogger()
@@ -292,8 +298,8 @@ func main() {
 	//init db
 	err := initDb()
 	if err != nil {
-		log4go.Error("Failed to init database.")
-		os.Exit(1)
+		log4go.Error("Failed to init database, error %s", err)
+		Exist(1)
 	}
 
 	//only test
