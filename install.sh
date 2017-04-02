@@ -10,7 +10,20 @@ export GOPATH="$CURDIR"
 
 #gofmt -w src
 echo $GOPATH
-go install apidemo 
+
+#echo $0 $1
+if [ $1="debug" ]
+then
+    echo "build for debug info..."
+    go install -gcflags "-N -l"  apidemo 
+else
+    echo "will build to release"   
+    #go install -ldflags “-s” client  
+    go install client  
+fi
+
+
+
 
 #copy the config file  to bin
 cp $CURDIR/src/config/logconfig.xml ./bin

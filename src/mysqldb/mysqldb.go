@@ -56,7 +56,7 @@ func CreateUsersTable() error {
 
 	createtable := `create table if not exists users (		
 		id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
-		name char(18) not null,
+		name char(64) not null,
 		sex tinyint unsigned,
 		age tinyint unsigned,
         email char(255),
@@ -73,14 +73,16 @@ func CreateUsersTable() error {
 
 	result, err := stmt.Exec()
 	if err != nil {
-		log4go.Info(result)
+		log4go.Error(err)
 		return err
 	}
+
+	log4go.Debug(result)
 
 	return nil
 }
 
-func InsertUser(id int, name string, sex int, age int, email string, phone string, createdate int64) error {
+func InsertUser(name string, sex int, age int, email string, phone string, createdate int64) error {
 	// stmt, err := MyDbInstance.db.Prepare(
 	// 	"insert into users(id,name,sex,age,email,phone, createdate)values(?,?,?,?,?,?,?)")
 
@@ -187,7 +189,7 @@ func DeleteUserByeName(name string) {
 }
 
 func NameExistInDb(name string) (string, error) {
-	log4go.Info("NameExistInDb, name=", name)
+	log4go.Info("NameExistInDb, name=%s", name)
 	resName := ""
 	if name == "" {
 		return resName, errors.New("name is empty.")

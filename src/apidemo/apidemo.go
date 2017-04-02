@@ -3,17 +3,19 @@ package main
 import (
 	"accounts"
 	"encoding/json"
-	"model"
-	"mysqldb"
-	_ "utilities"
+	"flag"
 	"fmt"
 	"github.com/alecthomas/log4go"
 	"github.com/gorilla/mux"
+	"io/ioutil"
+	"model"
+	"mysqldb"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"time"
-	"path"
+	_ "utilities"
 )
 
 type ReturnData struct {
@@ -55,12 +57,13 @@ func HandlerForGetUser(w http.ResponseWriter, r *http.Request) {
 	//query by id first
 	var result *accounts.Account
 	var err error
-	i, err := strconv.Atoi(QueryKeyValue("id", r))
+	i, err := strconv.Atoi(QueryKeyValueFromURL("id", r))
 	if err == nil {
 		result, err = mysqldb.QueryUserById(i)
+
 	} else {
 		//or query by name
-		n := QueryKeyValue("name", r)
+		n := QueryKeyValueFromURL("name", r)
 		if n != "" {
 			result, err = mysqldb.QueryUserByName(n)
 		}
@@ -73,7 +76,7 @@ func HandlerForGetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	/* //memory cache
 	for _, one := range gAccount {
-		if strconv.Itoa(one.ID) == QueryKeyValue("id", r) {
+		if strconv.Itoa(one.ID) == QueryKeyValueFromURL("id", r) {
 			account = one
 			// s := fmt.Sprintf("id=%d, age=%d, email=%s, phone=%s, createdate=%d",
 			// 	one.ID, one.Age, one.Email, one.Phone, one.CreateDate)
@@ -152,13 +155,16 @@ func HandlerForNewUser(w http.ResponseWriter, r *http.Request) {
 		log4go.Debug("exit.")
 	}()
 
-	// log4go.Info(*r)
-	// keys := r.URL.Query()
-	// log4go.Info(keys)
+	result, _ := ioutil.ReadAll(r.Body)
+	r.Body.Close()
+	// fmt.Printf("%s\n", result)
 
-	//check the key if exist
-	hasname := QueryKeyValue("name", r)
-	log4go.Info("hasname=", hasname)
+	var newAccount accounts.Account
+	json.Unmarshal(result, &newAccount)
+
+	hasname := newAccount.Name
+
+	log4go.Info("hasname=%s", hasname)
 	if hasname == "" {
 		msg := nameIsInvalid("Name is empty.")
 		w.Write(msg)
@@ -170,24 +176,25 @@ func HandlerForNewUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//add new user to map
-	newid := len(gAccount) + 1
-	name := QueryKeyValue("name", r)
-	sex, _ := strconv.Atoi(QueryKeyValue("sex", r))
-	age, _ := strconv.Atoi(QueryKeyValue("age", r))
-	email := QueryKeyValue("email", r)
-	phone := QueryKeyValue("phone", r)
-	createdate := time.Now().UTC().Unix()
-	newAccount := accounts.Account{ID: newid,
-		Name:       name,
-		Sex:        sex,
-		Age:        age,
-		Email:      email,
-		Phone:      phone,
-		CreateDate: createdate}
+	// newid := len(gAccount) + 1
+	// name := QueryKeyValueFromURLFromBody("name", r)
+	// sex, _ := strconv.Atoi(QueryKeyValueFromURLFromBody("sex", r))
+	// age, _ := strconv.Atoi(QueryKeyValueFromURLFromBody("age", r))
+	// email := QueryKeyValueFromURLFromBody("email", r)
+	// phone := QueryKeyValueFromURLFromBody("phone", r)
+	// createdate := time.Now().UTC().Unix()
+	// newAccount := accounts.Account{ID: newid,
+	// 	Name:       name,
+	// 	Sex:        sex,
+	// 	Age:        age,
+	// 	Email:      email,
+	// 	Phone:      phone,
+	// 	CreateDate: createdate}
 	gAccount = append(gAccount, newAccount)
 	// log4go.Info(newAccount)
 
-	err := mysqldb.InsertUser(newid, name, sex, age, email, phone, createdate)
+	// err := mysqldb.InsertUser(newid, name, sex, age, email, phone, createdate)
+	err := mysqldb.InsertUser(newAccount.Name, newAccount.Sex, newAccount.Age, newAccount.Email, newAccount.Phone, newAccount.CreateDate)
 	if err == nil {
 		//reponse ok
 		w.Write(responseOk())
@@ -198,7 +205,7 @@ func HandlerForNewUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func QueryKeyValue(key string, r *http.Request) string {
+func QueryKeyValueFromURL(key string, r *http.Request) string {
 	vars := r.URL.Query()
 	value, ok := vars[key]
 	if ok {
@@ -236,7 +243,8 @@ func PhoneExist(phone string) bool {
 }
 
 func initDb() error {
-	err := mysqldb.InitDb()
+	var err error
+	err = mysqldb.InitDb()
 	if err == nil {
 		err = mysqldb.PingDb()
 		if err != nil {
@@ -247,7 +255,7 @@ func initDb() error {
 		} else {
 			log4go.Info("Ping db OK.")
 			err = mysqldb.CreateUsersTable()
-			if err != nil{
+			if err != nil {
 				log4go.Error("Create database,error %s", err)
 			}
 		}
@@ -264,7 +272,7 @@ func onlyTest() {
 func CheckUsage() {
 	if len(os.Args) < 2 {
 		log4go.Error("Usage:%s ip:port", os.Args[0])
-		log4go.Error("For example:%s 192.168.1.10:8000",os.Args[0])
+		log4go.Error("For example:%s -h 192.168.1.10:8000", os.Args[0])
 		Exist(1)
 	}
 }
@@ -275,16 +283,30 @@ func initLogger() {
 	exePath, _ := os.Executable()
 	// fmt.Println(exePath)
 	exeDir := path.Dir(exePath)
-	configPath := exeDir + "/logconfig.xml"	
-	fmt.Println("config file:" ,configPath)
+	configPath := exeDir + "/logconfig.xml"
+	fmt.Println("config file:", configPath)
 	log4go.LoadConfiguration(configPath)
 	log4go.Info("Loaded log config file")
 }
 
 func Exist(err int) {
 	//waiting log4go to complete
-	time.Sleep(1*time.Second)
+	time.Sleep(1 * time.Second)
 	os.Exit(err)
+}
+
+func getHostFromArgs() string {
+	fmt.Println("getHostFromArgs")
+	var host *string = flag.String("h", "err", "Usage: for example: -h localhost:8000")
+	flag.Parse()
+	if *host == "err" {
+		fmt.Println("Usage:", os.Args[0], "ip:port")
+		fmt.Println("For example:", os.Args[0], "192.168.1.10:8000")
+		Exist(1)
+	}
+
+	fmt.Println(*host)
+	return *host
 }
 
 func main() {
@@ -294,6 +316,7 @@ func main() {
 
 	//check ip and port
 	CheckUsage()
+	ipport := getHostFromArgs()
 
 	//init db
 	err := initDb()
@@ -326,7 +349,6 @@ func main() {
 	s.HandleFunc("/user", HandlerForNewUser).Methods("POST")
 
 	// Bind to a port and pass our router in
-	ipport := os.Args[1]
 	log4go.Info("start listen =%s", ipport)
 	log4go.Error(http.ListenAndServe(ipport, r))
 

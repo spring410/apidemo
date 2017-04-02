@@ -1,14 +1,19 @@
 package main
 
 import (
-	// "bytes"
+	"bytes"
+	// "crypto/rand"
+	"accounts"
+	"encoding/hex"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"os"
 	"sync"
-	// "time"
+	"time"
 )
 
 type ReturnData struct {
@@ -27,16 +32,24 @@ var gLock sync.RWMutex
 var gLock2 sync.RWMutex
 var gCounter int
 
+var gIpport string
+
+const (
+	index_szie = 10000 * 10
+)
+
 func QueryUserRequest() int {
 	gLock2.Lock()
 	gCounter++
 	fmt.Println("QueryUserRequest, counter=", gCounter)
 	gLock2.Unlock()
 
+	idRand := rand.Intn(index_szie)
 	iRes := -1
-	ipport := os.Args[1]
-	url := "http://" + ipport + "/account/1.0/user?id=1"
-	// fmt.Println("URL:>", url)
+	ipport := gIpport
+	url := fmt.Sprintf("http://%s/account/1.0/user?id=%d", ipport, idRand)
+	// url := "http://" + ipport + "/account/1.0/user?id=1"
+	fmt.Println("URL:>", url)
 
 	// var query = []byte("id=1")
 	req, err := http.NewRequest("GET", url, nil)
@@ -57,13 +70,14 @@ func QueryUserRequest() int {
 	// fmt.Println("response Status:", resp.Status)
 	// fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println("response Body:", string(body))
+	fmt.Println("response Body:", string(body))
 
 	var v ReturnData
 	e := json.Unmarshal(body, &v)
 	// fmt.Println(e)
 	if e == nil {
 		if v.Success == "true" {
+
 			fmt.Println("ok")
 			iRes = 1
 		} else {
@@ -104,12 +118,145 @@ func CollectResult(ch chan int) {
 	}
 }
 
+func CreateNewUser(data []byte) int {
+
+	fmt.Println("CreateNewUser...")
+
+	iRes := -1
+	ipport := gIpport
+	url := "http://" + ipport + "/account/1.0/user"
+	// fmt.Println("URL:>", url)
+
+	var postData = bytes.NewBuffer(data)
+	// req, err := http.NewRequest("POST", url, body)
+	resp, err := http.Post(url, "application/json;charset=utf-8", postData)
+	if err != nil {
+		fmt.Println(err)
+		return iRes
+	}
+
+	defer resp.Body.Close()
+
+	// fmt.Println("response Status:", resp.Status)
+	// fmt.Println("response Headers:", resp.Header)
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	var v ReturnData
+	e := json.Unmarshal(body, &v)
+	// fmt.Println(e)
+	if e == nil {
+		if v.Success == "true" {
+			fmt.Println("ok")
+			iRes = 1
+		} else {
+			fmt.Println("failed")
+			iRes = 0
+		}
+	} else {
+		//failed
+		iRes = 0
+	}
+	return iRes
+
+}
+
+func RadmonManyNewUsers() {
+
+	total := 10000 * 10
+
+	for i := 0; i < total; i++ {
+		// time.Sleep(1 * time.Second)
+		data := RadomNewOneUser()
+		fmt.Println(string(data))
+		iRes := CreateNewUser(data)
+		fmt.Println("1:OK, other Failed. result=", iRes)
+
+	}
+}
+
+func RadomNewOneUser() []byte {
+
+	randName, err := GenerateRandomString(12)
+	if err != nil {
+		return nil
+	}
+	name := "test_" + string(randName)
+	sex := rand.Intn(3)
+	age := rand.Intn(100)
+	email := "Email_" + string(randName) + "@test.com"
+	phone := "12345678901"
+	createdate := time.Now().UTC().Unix()
+	newUser := accounts.Account{
+		Name:       name,
+		Sex:        sex,
+		Age:        age,
+		Email:      email,
+		Phone:      phone,
+		CreateDate: createdate}
+
+	fmt.Println(name, sex, age, email, phone, createdate)
+
+	data, err := json.Marshal(newUser)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return []byte(data)
+}
+
+//Generate random bytes with specific length
+func GenerateRandomBytes(length int) ([]byte, error) {
+	b := make([]byte, length)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func GenerateRandomString(length int) (string, error) {
+	b := make([]byte, length)
+	n, err := rand.Read(b)
+	if n != len(b) || err != nil {
+		return "", fmt.Errorf("Could not successfully read from the system CSPRNG.")
+	}
+	return hex.EncodeToString(b), nil
+}
+
+func getActionFromArgs() (string, string) {
+
+	var host *string = flag.String("h", "localhost:8000", "Usage for example: -h 192.168.1.10:8000")
+	var action *string = flag.String("a", "query", "Usage for example: -h 192.168.1.10:8000 -a [query|new]")
+	// var action1 string
+	// flag.StringVar(&action1, "a", "this is a test", "help msg for dir")
+	flag.Parse()
+	// if *host == "err" {
+	// 	// fmt.Println("Usage:", os.Args[0], "ip:port")
+	// 	// fmt.Println("For example:", os.Args[0], "192.168.1.10:8000")
+	// 	os.Exit(1)
+	// }
+
+	// fmt.Println(gIpport)
+	return *host, *action
+}
+
 func main() {
 	fmt.Println("start to request...")
 	if len(os.Args) < 2 {
-		fmt.Println("Usage:", os.Args[0], "ip:port")
-		fmt.Println("For example:", os.Args[0], "192.168.1.10:8000")
+		fmt.Println("Usage for example", os.Args[0], " -h 192.168.1.10:8000 -a [query|new]")
 		os.Exit(1)
+	}
+
+	var action string
+	gIpport, action = getActionFromArgs()
+	fmt.Println(gIpport, action)
+
+	if action == "new" {
+		//new user
+		fmt.Println("start to create new user...")
+		RadmonManyNewUsers()
+		return
 	}
 
 	ch := make(chan int, 1000)

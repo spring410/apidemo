@@ -10,7 +10,19 @@ export GOPATH="$CURDIR"
 
 #gofmt -w src
 echo $GOPATH
-go install client 
+
+#echo $0 $1
+if [ $1="debug" ]
+then
+    go install client 
+else
+    echo "will build to release"   
+    #go install -ldflags “-s” client  
+    go install client  
+fi
+
+
+
 
 
 export GOPATH="$OLDGOPATH"
