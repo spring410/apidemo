@@ -41,11 +41,11 @@ const (
 func QueryUserRequest() int {
 	gLock2.Lock()
 	gCounter++
-	fmt.Println("QueryUserRequest, counter=", gCounter)
+	// fmt.Println("QueryUserRequest, counter=", gCounter)
 	gLock2.Unlock()
 
 	idRand := rand.Intn(index_szie)
-	iRes := -1
+	iRes := 3
 	ipport := gIpport
 	url := fmt.Sprintf("http://%s/account/1.0/user?id=%d", ipport, idRand)
 	// url := "http://" + ipport + "/account/1.0/user?id=1"
@@ -70,7 +70,7 @@ func QueryUserRequest() int {
 	// fmt.Println("response Status:", resp.Status)
 	// fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
+	// fmt.Println("response Body:", string(body))
 
 	var v ReturnData
 	e := json.Unmarshal(body, &v)
@@ -78,10 +78,10 @@ func QueryUserRequest() int {
 	if e == nil {
 		if v.Success == "true" {
 
-			fmt.Println("ok")
+			// fmt.Println("ok")
 			iRes = 1
 		} else {
-			fmt.Println("failed")
+			// fmt.Println("failed")
 			iRes = 0
 		}
 	} else {
@@ -93,10 +93,41 @@ func QueryUserRequest() int {
 }
 
 func SendQuery(ch chan int) {
-	for {
+
+	//total=10000, query mysql
+	//1. time:16.875256 seconds
+	//2. time:11.873569 seconds
+	//3. time:13.07 seconds
+	//4. time:16.187642 seconds
+
+	//total=50000, query mysql
+	//1. time:71.957576 seconds
+	//2. time:71.764807 seconds
+	//3. time:56.857500 seconds
+	//4. time:85.119554 seconds
+
+	total := 50000
+
+	startTime := time.Now().UTC()
+	var log string
+	log = fmt.Sprintf("start to test, total=%d, time=%s", total, startTime)
+	fmt.Println(log)
+
+	// for {
+	for i := 0; i < total; i++ {
 		res := QueryUserRequest()
 		ch <- res
 	}
+
+	endTime := time.Now().UTC()
+	log = fmt.Sprintf("end to test, total=%d, time=%s", total, endTime)
+	fmt.Println(log)
+
+	timesexpend := endTime.Sub(startTime)
+
+	log = fmt.Sprintf("==>>time:%f seconds", timesexpend.Seconds())
+	fmt.Println(log)
+
 }
 
 func CollectResult(ch chan int) {
@@ -113,7 +144,8 @@ func CollectResult(ch chan int) {
 		default:
 			gResult[3]++
 		}
-		fmt.Println(gResult[0], gResult[1], gResult[2], gResult[3])
+		loginfo := fmt.Sprintf("total failed=%d, ok=%d, http error=%d, unknown=%d", gResult[0], gResult[1], gResult[2], gResult[3])
+		fmt.Println(loginfo)
 		gLock.Unlock()
 	}
 }

@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"st",
+				"startTime\ttime.Time ν"
+			],
+			[
+				"no",
+				"Now\ttime.Time ƒ"
+			],
+			[
+				"spr",
+				"Sprintf\tstring ƒ"
+			],
+			[
+				"s",
+				"Sprintln\tstring ƒ"
+			],
+			[
+				"sp",
+				"Sprintf\tstring ƒ"
+			],
+			[
+				"time",
+				"timesexpend\tint ν"
+			],
+			[
+				"v",
+				"Vars\tmap[string]string ƒ"
+			],
+			[
+				"b",
+				"Body\tio.ReadCloser ν"
+			],
+			[
 				"pr",
 				"Println\tn int, err error ƒ"
 			]
@@ -12,10 +44,27 @@
 	"buffers":
 	[
 		{
-			"file": ".gitignore",
+			"file": "src/mysqldb/mysqldb.go",
 			"settings":
 			{
-				"buffer_size": 68,
+				"buffer_size": 4550,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/accounts/accounts.go",
+			"settings":
+			{
+				"buffer_size": 395,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/client/clientreqestapi.go",
+			"settings":
+			{
+				"buffer_size": 6268,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -24,26 +73,33 @@
 			"file": "src/apidemo/apidemo.go",
 			"settings":
 			{
-				"buffer_size": 6682,
+				"buffer_size": 7411,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "init_db.sh",
+			"file": "src/github.com/gorilla/mux/mux.go",
 			"settings":
 			{
-				"buffer_size": 42,
-				"encoding": "UTF-8",
-				"line_ending": "Unix",
-				"name": "#!/bin/bash"
+				"buffer_size": 15856,
+				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/mysqldb/mysqldb.go",
+			"file": "client_install.sh",
 			"settings":
 			{
-				"buffer_size": 4535,
+				"buffer_size": 412,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "install.sh",
+			"settings":
+			{
+				"buffer_size": 538,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -69,7 +125,7 @@
 	},
 	"console":
 	{
-		"height": 126.0,
+		"height": 233.0,
 		"history":
 		[
 			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
@@ -88,18 +144,24 @@
 	[
 		"/home/good/gowork/docs/restfulapidemo",
 		"/home/good/gowork/docs/restfulapidemo/src",
-		"/home/good/gowork/docs/restfulapidemo/src/apidemo"
+		"/home/good/gowork/docs/restfulapidemo/src/apidemo",
+		"/home/good/gowork/docs/restfulapidemo/src/client"
 	],
 	"file_history":
 	[
+		"/home/good/gowork/docs/restfulapidemo/src/github.com/emicklei/go-restful/examples/google_app_engine/datastore/main.go",
+		"/home/good/gowork/docs/restfulapidemo/src/client/clientreqestapi.go",
+		"/home/good/gowork/docs/restfulapidemo/bin/apidemo",
+		"/home/good/gowork/docs/restfulapidemo/src/apidemo/apidemo.go",
+		"/home/good/gowork/docs/restfulapidemo/src/mysqldb/mysqldb.go",
+		"/home/good/gowork/docs/restfulapidemo/init_db.sh",
+		"/home/good/gowork/docs/restfulapidemo/.gitignore",
 		"/home/good/.config/sublime-text-3/Packages/User/GoSublime.sublime-settings",
 		"/home/good/.config/sublime-text-3/Packages/GoSublime/GoSublime.sublime-settings",
 		"/home/good/gowork/docs/restfulapidemo/init_db.sql",
 		"/home/good/.config/sublime-text-3/Packages/GoSublime/USAGE.md",
 		"/home/good/gowork/docs/restfulapidemo/install.sh",
 		"/home/good/gowork/docs/restfulapidemo/client_install.sh",
-		"/home/good/gowork/docs/restfulapidemo/src/apidemo/apidemo.go",
-		"/home/good/gowork/docs/restfulapidemo/.gitignore",
 		"/home/good/gowork/docs/restfulapidemo/downloadpk.sh",
 		"/home/good/gowork/docs/restfulapidemo/src/.gitignore",
 		"/home/good/gowork/docs/restfulapidemo/src/restfulapidemo/apidemo.go",
@@ -130,6 +192,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"QueryKeyValueFromURLFromBody",
+			"QueryKeyValue",
+			"QueryUserRequest",
+			"mysqldb",
 			"os.Exit"
 		],
 		"highlight": true,
@@ -138,6 +204,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"QueryKeyValueFromURL"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -148,52 +215,24 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": ".gitignore",
+					"file": "src/mysqldb/mysqldb.go",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 68,
+						"buffer_size": 4550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								42,
-								42
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/apidemo/apidemo.go",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6682,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1066,
-								1066
+								3900,
+								3900
 							]
 						],
 						"settings":
@@ -202,56 +241,55 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 559.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "init_db.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 42,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								42,
-								42
-							]
-						],
-						"settings":
-						{
-							"auto_name": "#!/bin/bash",
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3054.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "src/mysqldb/mysqldb.go",
+					"buffer": 1,
+					"file": "src/accounts/accounts.go",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4535,
+						"buffer_size": 395,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1080,
-								1080
+								16,
+								16
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GoSublime/syntax/GoSublime-Go.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/client/clientreqestapi.go",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6268,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1999,
+								1999
 							]
 						],
 						"settings":
@@ -260,10 +298,124 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 14552.0,
+						"translation.y": 1362.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/apidemo/apidemo.go",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3944,
+								3944
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GoSublime/syntax/GoSublime-Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2927.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/github.com/gorilla/mux/mux.go",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15856,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10700,
+								10700
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GoSublime/syntax/GoSublime-Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5934.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "client_install.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 412,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								217,
+								217
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "install.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 538,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								107,
+								107
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -312,11 +464,15 @@
 	{
 		"height": 0.0
 	},
+	"output.gotools_syntax_errors":
+	{
+		"height": 118.0
+	},
 	"pinned_build_system": "",
 	"project": "apidemo.sublime-project",
 	"replace":
 	{
-		"height": 42.0
+		"height": 62.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -325,6 +481,30 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"mysq",
+				"src/mysqldb/mysqldb.go"
+			],
+			[
+				"main",
+				"src/github.com/emicklei/go-restful/examples/google_app_engine/datastore/main.go"
+			],
+			[
+				"acc",
+				"src/accounts/accounts.go"
+			],
+			[
+				"apide",
+				"src/apidemo/apidemo.go"
+			],
+			[
+				"apid",
+				"src/apidemo/apidemo.go"
+			],
+			[
+				"my",
+				"src/mysqldb/mysqldb.go"
+			]
 		],
 		"width": 0.0
 	},
